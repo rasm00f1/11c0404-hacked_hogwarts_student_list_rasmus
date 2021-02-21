@@ -92,6 +92,9 @@ function prepareStudentData(data) {
       oneStudent.img = `${trimmedName.substring(hyphenIndex + 1, hyphenIndex + 2).toLowerCase() + hyphenNameRest}_${trimmedName.substring(0, 1)}.png`;
       studentList.push(oneStudent);
     }
+    if (oneStudent.lastName == "Patil") {
+      oneStudent.img = `${trimmedLastNameNoMiddleFirstLetter.toLowerCase()}${trimmedLastNameNoMiddleRest}_${firstNameCapitalized.toLowerCase()}.png`;
+    }
   });
 
   console.table(studentList);
