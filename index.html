@@ -12,7 +12,23 @@
   <body>
     <div class="background">
       <h1 class="title">Hogwarts Student List</h1>
-      <section class="list"></section>
+
+      <div class="options">
+        <div class="sort_container">
+          <h3>SORT LIST BY</h3>
+          <button data-action="sort" data-sort-direction="asc" data-sort="firstName" value="first_name">First name</button>
+          <button data-action="sort" data-sort-direction="asc" data-sort="lastName" value="last_name">Last name</button>
+          <button data-action="sort" data-sort-direction="asc" data-sort="house" value="last_name">House</button>
+        </div>
+        <div class="filter_container">
+          <p class="css_all" data-action="filter" data-filter="all" value="all">All</p>
+          <p class="css_gryffindor" data-action="filter" data-filter="gryffindor" value="gryffindor">Gryffindor</p>
+          <p class="css_hufflepuff" data-action="filter" data-filter="hufflepuff" value="hufflepuff">Hufflepuff</p>
+          <p class="css_slytherin" data-action="filter" data-filter="slytherin" value="slytherin">Slytherin</p>
+          <p class="css_ravenclaw" data-action="filter" data-filter="ravenclaw" value="ravenclaw">Ravenclaw</p>
+        </div>
+      </div>
+      <section id="list"></section>
     </div>
     <template>
       <article class="student">
