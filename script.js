@@ -32,6 +32,8 @@ function init() {
 
 function registerButtons() {
   // set eventlisteners
+  document.querySelector("#search_field").addEventListener("keyup", searchNames);
+
   filterButtons.forEach((button) => {
     button.addEventListener("click", selectFilter);
   });
@@ -134,26 +136,56 @@ function displayStudents(buildList) {
   container.innerHTML = "";
 
   buildList.forEach((oneStudent) => {
-    let clone = studentTemplate.cloneNode(true).content;
-    clone.querySelector(".student_firstname").textContent += oneStudent.firstName;
-    clone.querySelector(".student_lastname").textContent += oneStudent.lastName;
-    clone.querySelector(".student_img").src += oneStudent.img;
+    if (oneStudent.expelled === false) {
+      let clone = studentTemplate.cloneNode(true).content;
+      clone.querySelector(".student_firstname").textContent += oneStudent.firstName;
+      clone.querySelector(".student_lastname").textContent += oneStudent.lastName;
+      clone.querySelector(".student_img").src += oneStudent.img;
 
-    if (oneStudent.expelled) {
+      /*     if (oneStudent.expelled) {
       clone.querySelector(".student_expelled_list").classList.remove("hide");
     } else {
       clone.querySelector(".student_expelled_list").classList.add("hide");
+    } */
+
+      if (oneStudent.prefect) {
+        clone.querySelector(".student_prefect_list").classList.remove("hide");
+      } else {
+        clone.querySelector(".student_prefect_list").classList.add("hide");
+      }
+
+      clone.querySelector("article").addEventListener("click", () => showDetails(oneStudent));
+
+      container.appendChild(clone);
     }
+  });
+}
 
-    if (oneStudent.prefect) {
-      clone.querySelector(".student_prefect_list").classList.remove("hide");
-    } else {
-      clone.querySelector(".student_prefect_list").classList.add("hide");
+function displayExpelled(buildList) {
+  const container = document.querySelector("#list");
+  const studentTemplate = document.querySelector("template");
+
+  container.innerHTML = "";
+
+  buildList.forEach((oneStudent) => {
+    if (oneStudent.expelled === true) {
+      let clone = studentTemplate.cloneNode(true).content;
+      clone.querySelector(".student_firstname").textContent += oneStudent.firstName;
+      clone.querySelector(".student_lastname").textContent += oneStudent.lastName;
+      clone.querySelector(".student_img").src += oneStudent.img;
+
+      clone.querySelector(".student_expelled_list").classList.remove("hide");
+
+      if (oneStudent.prefect) {
+        clone.querySelector(".student_prefect_list").classList.remove("hide");
+      } else {
+        clone.querySelector(".student_prefect_list").classList.add("hide");
+      }
+
+      clone.querySelector("article").addEventListener("click", () => showDetails(oneStudent));
+
+      container.appendChild(clone);
     }
-
-    clone.querySelector("article").addEventListener("click", () => showDetails(oneStudent));
-
-    container.appendChild(clone);
   });
 }
 
@@ -278,6 +310,8 @@ function showDetails(oneStudent) {
 
   if (oneStudent.expelled) {
     document.querySelector(".student_expelled").classList.remove("hide");
+    document.querySelector("#expel_button").classList.add("hide");
+    document.querySelector("#prefect_button").classList.add("hide");
   } else {
     document.querySelector(".student_expelled").classList.add("hide");
   }
@@ -325,6 +359,9 @@ function showDetails(oneStudent) {
     document.querySelector(".modal").classList.add("hide");
     document.querySelector(".student_prefect").classList.add("hide");
     document.querySelector(".student_expelled").classList.add("hide");
+
+    document.querySelector("#expel_button").classList.remove("hide");
+    document.querySelector("#prefect_button").classList.remove("hide");
   }
 }
 
@@ -338,7 +375,12 @@ function selectFilter(event) {
 
 function setFilter(filter) {
   settings.filterBy = filter;
-  buildList();
+  console.log(filter);
+  if (filter === "expelled") {
+    buildExpelledList();
+  } else {
+    buildList();
+  }
 }
 
 function filterList(filteredStudentList) {
@@ -350,6 +392,8 @@ function filterList(filteredStudentList) {
     filteredStudentList = studentList.filter(isSlytherin);
   } else if (settings.filterBy === "ravenclaw") {
     filteredStudentList = studentList.filter(isRavenclaw);
+  } else if (settings.filterBy === "expelled") {
+    filteredStudentList = studentList.filter(isExpelled);
   } else if (settings.filterBy === "all") {
     filteredStudentList = studentList.filter(isAll);
   }
@@ -377,6 +421,10 @@ function isRavenclaw(student) {
   return student.house === "Ravenclaw";
 }
 
+function isExpelled(student) {
+  return student.expelled;
+}
+
 //SORTING
 function clickSortButton(event) {
   const sortBy = event.target.dataset.sort;
@@ -396,7 +444,12 @@ function clickSortButton(event) {
 function setSort(sortBy, sortDirection) {
   settings.sortBy = sortBy;
   settings.sortDirection = sortDirection;
-  buildList();
+
+  if (settings.filterBy === "expelled") {
+    buildExpelledList();
+  } else {
+    buildList();
+  }
 }
 
 function sortList(sortedList) {
@@ -421,10 +474,38 @@ function sortList(sortedList) {
   return sortedList;
 }
 
+//Searchbar
+function searchNames() {
+  let input = document.querySelector("#search_field");
+  let filtering = input.value.toUpperCase();
+
+  let list = document.querySelectorAll("#list article");
+  console.log(list);
+
+  for (let i = 0; i < list.length; i++) {
+    let studentFirst = list[i].querySelectorAll("h2")[0];
+    let studentLast = list[i].querySelectorAll("h2")[1];
+    let searchedName = studentFirst.textContent + studentLast.innerText;
+
+    if (searchedName.toUpperCase().indexOf(filtering) === -1) {
+      list[i].style.display = "none";
+    } else {
+      list[i].style.display = "";
+    }
+  }
+}
 //BUILD THE NEW LIST
 function buildList() {
   const currentList = filterList(studentList);
   const sortedList = sortList(currentList);
 
   displayStudents(sortedList);
+}
+
+function buildExpelledList() {
+  const currentList = filterList(studentList);
+  const sortedList = sortList(currentList);
+  console.log(sortedList);
+
+  displayExpelled(sortedList);
 }
