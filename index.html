@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link href="https://fonts.googleapis.com/css2?family=Carter+One&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
     <title>Hacked Hogwarts Student List</title>
   </head>
@@ -16,9 +17,10 @@
       <div class="options">
         <div class="sort_container">
           <h3>SORT LIST BY</h3>
-          <button data-action="sort" data-sort-direction="asc" data-sort="firstName" value="first_name">First name</button>
-          <button data-action="sort" data-sort-direction="asc" data-sort="lastName" value="last_name">Last name</button>
-          <button data-action="sort" data-sort-direction="asc" data-sort="house" value="last_name">House</button>
+          <button class="button_style" data-action="sort" data-sort-direction="asc" data-sort="firstName" value="first_name">First name</button>
+          <button class="button_style" data-action="sort" data-sort-direction="asc" data-sort="lastName" value="last_name">Last name</button>
+          <button class="button_style" data-action="sort" data-sort-direction="asc" data-sort="house" value="last_name">House</button>
+          <button class="button_style" data-action="sort" data-sort-direction="asc" data-sort="expelled" value="last_name">Expelled</button>
         </div>
         <div class="filter_container">
           <p class="css_all" data-action="filter" data-filter="all" value="all">All</p>
@@ -32,11 +34,34 @@
     </div>
     <template>
       <article class="student">
+        <div class="status_box">
+          <figure><img class="student_expelled_list hide" src="images/expelled.png" alt=" photo" /></figure>
+          <figure><img class="student_prefect_list hide" src="images/prefect_star.png" alt=" photo" /></figure>
+        </div>
         <figure><img class="student_img" src="images/" alt=" photo" /></figure>
         <h2 class="student_firstname"></h2>
         <h2 class="student_lastname"></h2>
       </article>
     </template>
+
+    <article class="modal hide">
+      <div id="details_popup">
+        <button class="closebutton">X</button>
+        <figure><img class="student_img" src="images/" alt=" photo" /></figure>
+        <div class="name_plate">
+          <h2 class="student_firstname">firstname</h2>
+          <h2 class="student_nickname"></h2>
+          <h2 class="student_lastname">lastname</h2>
+        </div>
+        <figure><img class="student_house" src="images/" alt=" photo" /></figure>
+        <div class="sort_container button_position">
+          <figure><img class="student_expelled hide" src="images/expelled.png" alt=" photo" /></figure>
+          <figure><img class="student_prefect hide" src="images/prefect_star.png" alt=" photo" /></figure>
+          <button id="expel_button" class="button_style">EXPEL</button>
+          <button id="prefect_button" class="button_style">PREFECT</button>
+        </div>
+      </div>
+    </article>
 
     <script src="script.js"></script>
   </body>

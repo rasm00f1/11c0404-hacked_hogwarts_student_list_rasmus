@@ -14,6 +14,8 @@ const Student = {
   nickName: "",
   img: null,
   house: null,
+  prefect: false,
+  expelled: false,
 };
 
 const settings = {
@@ -76,6 +78,8 @@ function prepareStudentData(data) {
       oneStudent.lastName = lastNameCapitalized;
       oneStudent.img = `${lastNameCapitalized.toLowerCase()}_${trimmedName.substring(0, 1).toLowerCase()}.png`;
       oneStudent.house = houseNameCapitalized;
+      oneStudent.expelled = false;
+      oneStudent.prefect = false;
     } else if (trimmedName.indexOf(" ", firstSpace + 1) == -1) {
       oneStudent.firstName = firstNameCapitalized;
       oneStudent.middleName = "";
@@ -83,6 +87,8 @@ function prepareStudentData(data) {
       oneStudent.lastName = lastNameNoMiddleCapitalized;
       oneStudent.img = `${lastNameNoMiddleCapitalized.toLowerCase()}_${trimmedName.substring(0, 1).toLowerCase()}.png`;
       oneStudent.house = houseNameCapitalized;
+      oneStudent.expelled = false;
+      oneStudent.prefect = false;
     } else if (trimmedName.indexOf(" ", firstSpace + 1) !== -1 && trimmedName.indexOf('"') == -1) {
       oneStudent.firstName = firstNameCapitalized;
       oneStudent.middleName = middleNameCapitalized;
@@ -90,6 +96,8 @@ function prepareStudentData(data) {
       oneStudent.lastName = lastNameCapitalized;
       oneStudent.img = `${lastNameCapitalized.toLowerCase()}_${trimmedName.substring(0, 1).toLowerCase()}.png`;
       oneStudent.house = houseNameCapitalized;
+      oneStudent.expelled = false;
+      oneStudent.prefect = false;
     }
     if (trimmedName.indexOf(" ") == -1) {
       oneStudent.firstName = trimmedName;
@@ -98,6 +106,8 @@ function prepareStudentData(data) {
       oneStudent.nickName = "";
       oneStudent.img = "anon.png";
       oneStudent.house = houseNameCapitalized;
+      oneStudent.expelled = false;
+      oneStudent.prefect = false;
     }
     if (hyphenIndex !== -1) {
       oneStudent.lastName = trimmedName.substring(firstSpace + 1, hyphenIndex) + hyphenName;
@@ -114,7 +124,7 @@ function prepareStudentData(data) {
     }
   });
 
-  displayStudents(studentList);
+  buildList(studentList);
 }
 
 function displayStudents(buildList) {
@@ -129,8 +139,167 @@ function displayStudents(buildList) {
     clone.querySelector(".student_lastname").textContent += oneStudent.lastName;
     clone.querySelector(".student_img").src += oneStudent.img;
 
+    if (oneStudent.expelled) {
+      clone.querySelector(".student_expelled_list").classList.remove("hide");
+    } else {
+      clone.querySelector(".student_expelled_list").classList.add("hide");
+    }
+
+    if (oneStudent.prefect) {
+      clone.querySelector(".student_prefect_list").classList.remove("hide");
+    } else {
+      clone.querySelector(".student_prefect_list").classList.add("hide");
+    }
+
+    clone.querySelector("article").addEventListener("click", () => showDetails(oneStudent));
+
     container.appendChild(clone);
   });
+}
+
+//EXPELLING & PREFECTS
+function trophyClicked(selectedAnimal) {
+  const animalStatus = checkWinnerStatus(selectedAnimal);
+  const winnerArray = allAnimals.filter((arrayObject) => arrayObject.winner);
+  const otherWinnerAnimal = winnerArray.filter((animal) => animal.type === selectedAnimal.type).shift();
+  console.log(otherWinnerAnimal);
+
+  const checkForSameType = winnerArray.some((arrayObject) => arrayObject.type === selectedAnimal.type);
+
+  console.log(checkForSameType);
+
+  if (animalStatus === true) {
+    toggleTrophy(selectedAnimal);
+  } else if (checkForSameType === true) {
+    removeOther(otherWinnerAnimal);
+    console.log("Can't have multiple of the same type as winners");
+  } else if (winnerArray.length >= 2) {
+    console.log("There are to many winners");
+    removeAorB(winnerArray[0], winnerArray[1]);
+  } else {
+    toggleTrophy(selectedAnimal);
+  }
+
+  function removeOther(other) {
+    // Ask the use to ignore, or remove 'other'
+    document.querySelector("#remove_other").classList.remove("hide");
+    document.querySelector("#remove_other .closebutton").addEventListener("click", closeDialog);
+    document.querySelector("#remove_other #removeother").addEventListener("click", clickRemoveOther);
+
+    // show name of winner to remove
+    document.querySelector("#remove_other [data-field=winnerOther]").textContent = other.name;
+
+    // If ignore, do nothing
+    function closeDialog() {
+      document.querySelector("#remove_other").classList.add("hide");
+      document.querySelector("#remove_other .closebutton").removeEventListener("click", closeDialog);
+      document.querySelector("#remove_other #removeother").removeEventListener("click", clickRemoveOther);
+    }
+
+    // If remove other:
+    function clickRemoveOther() {
+      removeWinner(other);
+      makeWinner(selectedAnimal);
+      buildList();
+      closeDialog();
+    }
+  }
+
+  function removeAorB(winnerA, winnerB) {
+    //ask the user to ignore, or remove a or b
+    document.querySelector("#remove_aorb").classList.remove("hide");
+    document.querySelector("#remove_aorb .closebutton").addEventListener("click", closeDialog);
+    document.querySelector("#remove_aorb #removea").addEventListener("click", removeA);
+    document.querySelector("#remove_aorb #removeb").addEventListener("click", removeB);
+
+    // show name on buttons
+    document.querySelector("#remove_aorb [data-field=winnerA]").textContent = winnerA.name;
+    document.querySelector("#remove_aorb [data-field=winnerB]").textContent = winnerB.name;
+    // If ignore, do nothing
+    function closeDialog() {
+      document.querySelector("#remove_aorb").classList.add("hide");
+      document.querySelector("#remove_aorb .closebutton").removeEventListener("click", closeDialog);
+      document.querySelector("#remove_aorb #removea").removeEventListener("click", removeA);
+      document.querySelector("#remove_aorb #removeb").removeEventListener("click", removeB);
+    }
+    //if remove A:
+    function removeA() {
+      removeWinner(winnerA);
+      makeWinner(selectedAnimal);
+      buildList();
+      closeDialog();
+    }
+    //else - if removeB
+    function removeB() {
+      removeWinner(winnerB);
+      makeWinner(selectedAnimal);
+      buildList();
+      closeDialog();
+    }
+  }
+
+  function removeWinner(winnerAnimal) {
+    winnerAnimal.winner = false;
+  }
+
+  function makeWinner(currentAnimal) {
+    currentAnimal.winner = true;
+  }
+
+  buildList();
+}
+
+function checkWinnerStatus(animal) {
+  return animal.winner;
+}
+
+function toggleTrophy(animal) {
+  animal.winner = !animal.winner;
+  buildList();
+}
+
+function expelStudent(student) {
+  student.expelled = !student.expelled;
+  buildList();
+}
+
+//POPUP
+
+function showDetails(oneStudent) {
+  document.querySelector(".modal").classList.remove("hide");
+
+  document.querySelector("#details_popup .student_img").src += oneStudent.img;
+  document.querySelector("#details_popup .student_firstname").textContent = oneStudent.firstName;
+  document.querySelector("#details_popup .student_nickname").textContent = oneStudent.nickName;
+  document.querySelector("#details_popup .student_lastname").textContent = oneStudent.lastName;
+  document.querySelector("#details_popup .student_house").src += `house_shield_${oneStudent.house.toLowerCase()}.png`;
+
+  if (oneStudent.expelled) {
+    document.querySelector(".student_expelled").classList.remove("hide");
+  } else {
+    document.querySelector(".student_expelled").classList.add("hide");
+  }
+
+  document.querySelector("#expel_button").addEventListener("click", expelClicked);
+  function expelClicked() {
+    expelStudent(oneStudent);
+  }
+
+  //winners
+  document.querySelector("#prefect_button").addEventListener("click", startTrophyClicked);
+  function startTrophyClicked() {
+    trophyClicked(oneStudent);
+  }
+
+  document.querySelector("#details_popup .closebutton").addEventListener("click", closeDetails);
+
+  function closeDetails() {
+    document.querySelector("#details_popup .student_img").src = "images/";
+    document.querySelector("#details_popup .student_house").src = "images/";
+    document.querySelector("#details_popup .closebutton").removeEventListener("click", closeDetails);
+    document.querySelector("#expel_button").removeEventListener("click", expelClicked);
+    document.querySelector(".modal").classList.add("hide");
+  }
 }
 
 //FILTERING
