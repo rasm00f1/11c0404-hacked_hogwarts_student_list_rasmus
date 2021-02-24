@@ -201,14 +201,14 @@
 }
 
 .student h2 {
-  font-family: "Carter One", cursive;
-  font-weight: 100;
-  font-size: 20px;
-  color: rgb(231, 229, 223);
+  font-family: "Big Shoulders Stencil Display", cursive;
+  font-weight: 400;
+  font-size: 24px;
+  color: rgb(240, 240, 240);
 }
 
 .student_img {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 /* STUDENT MODAL */
@@ -242,6 +242,42 @@
   background-image: url(images/background_modal2.png);
   background-size: cover;
   position: relative;
+}
+
+.warning {
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: 120px;
+  padding-bottom: 10px;
+
+  height: 700px;
+  width: 350px;
+  background-image: url(images/background_warning.png);
+  background-size: cover;
+  position: relative;
+}
+
+.warning h1 {
+  font-family: "Emilys Candy", cursive;
+  font-size: 54px;
+  font-weight: 100;
+  color: rgb(247, 243, 242);
+  margin-top: 40px;
+}
+
+.warning p {
+  font-family: "Satisfy", cursive;
+  font-weight: 300;
+  font-size: 28px;
+  margin-left: 70px;
+  margin-right: 50px;
+  color: rgb(0, 0, 0);
+}
+
+.sidebyside {
+  margin-bottom: 50px;
 }
 
 #details_popup .student_img {

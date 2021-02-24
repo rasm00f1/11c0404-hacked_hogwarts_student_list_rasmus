@@ -158,26 +158,28 @@ function displayStudents(buildList) {
 }
 
 //EXPELLING & PREFECTS
-function trophyClicked(selectedAnimal) {
-  const animalStatus = checkWinnerStatus(selectedAnimal);
-  const winnerArray = allAnimals.filter((arrayObject) => arrayObject.winner);
-  const otherWinnerAnimal = winnerArray.filter((animal) => animal.type === selectedAnimal.type).shift();
-  console.log(otherWinnerAnimal);
+function prefectClicked(selectedStudent) {
+  console.log(selectedStudent);
+  const studentStatus = checkPrefectStatus(selectedStudent);
+  const prefectArray = studentList.filter((arrayObject) => arrayObject.prefect);
+  console.log(prefectArray);
+  const otherPrefectStudent = prefectArray.filter((student) => student.house === selectedStudent.house).shift();
+  console.log(otherPrefectStudent);
 
-  const checkForSameType = winnerArray.some((arrayObject) => arrayObject.type === selectedAnimal.type);
+  const checkForSameHouse = prefectArray.some((arrayObject) => arrayObject.house === selectedStudent.house);
 
-  console.log(checkForSameType);
+  console.log(checkForSameHouse);
 
-  if (animalStatus === true) {
-    toggleTrophy(selectedAnimal);
-  } else if (checkForSameType === true) {
-    removeOther(otherWinnerAnimal);
+  if (studentStatus === true) {
+    prefectStudent(selectedStudent);
+  } else if (checkForSameHouse === true) {
+    removeOther(otherPrefectStudent);
     console.log("Can't have multiple of the same type as winners");
-  } else if (winnerArray.length >= 2) {
+  } else if (prefectArray.length >= 2) {
     console.log("There are to many winners");
-    removeAorB(winnerArray[0], winnerArray[1]);
+    removeAorB(prefectArray[0], prefectArray[1]);
   } else {
-    toggleTrophy(selectedAnimal);
+    prefectStudent(selectedStudent);
   }
 
   function removeOther(other) {
@@ -187,7 +189,7 @@ function trophyClicked(selectedAnimal) {
     document.querySelector("#remove_other #removeother").addEventListener("click", clickRemoveOther);
 
     // show name of winner to remove
-    document.querySelector("#remove_other [data-field=winnerOther]").textContent = other.name;
+    document.querySelector("#remove_other [data-field=winnerOther]").textContent = other.lastName;
 
     // If ignore, do nothing
     function closeDialog() {
@@ -199,7 +201,7 @@ function trophyClicked(selectedAnimal) {
     // If remove other:
     function clickRemoveOther() {
       removeWinner(other);
-      makeWinner(selectedAnimal);
+      makeWinner(selectedStudent);
       buildList();
       closeDialog();
     }
@@ -213,8 +215,8 @@ function trophyClicked(selectedAnimal) {
     document.querySelector("#remove_aorb #removeb").addEventListener("click", removeB);
 
     // show name on buttons
-    document.querySelector("#remove_aorb [data-field=winnerA]").textContent = winnerA.name;
-    document.querySelector("#remove_aorb [data-field=winnerB]").textContent = winnerB.name;
+    document.querySelector("#remove_aorb [data-field=winnerA]").textContent = winnerA.lastName;
+    document.querySelector("#remove_aorb [data-field=winnerB]").textContent = winnerB.lastName;
     // If ignore, do nothing
     function closeDialog() {
       document.querySelector("#remove_aorb").classList.add("hide");
@@ -225,36 +227,36 @@ function trophyClicked(selectedAnimal) {
     //if remove A:
     function removeA() {
       removeWinner(winnerA);
-      makeWinner(selectedAnimal);
+      makeWinner(selectedStudent);
       buildList();
       closeDialog();
     }
     //else - if removeB
     function removeB() {
       removeWinner(winnerB);
-      makeWinner(selectedAnimal);
+      makeWinner(selectedStudent);
       buildList();
       closeDialog();
     }
   }
 
-  function removeWinner(winnerAnimal) {
-    winnerAnimal.winner = false;
+  function removeWinner(prefectStudent) {
+    prefectStudent.prefect = false;
   }
 
-  function makeWinner(currentAnimal) {
-    currentAnimal.winner = true;
+  function makeWinner(currentStudent) {
+    currentStudent.prefect = true;
   }
 
   buildList();
 }
 
-function checkWinnerStatus(animal) {
-  return animal.winner;
+function checkPrefectStatus(student) {
+  return student.prefect;
 }
 
-function toggleTrophy(animal) {
-  animal.winner = !animal.winner;
+function prefectStudent(student) {
+  student.prefect = !student.prefect;
   buildList();
 }
 
@@ -280,25 +282,49 @@ function showDetails(oneStudent) {
     document.querySelector(".student_expelled").classList.add("hide");
   }
 
+  if (oneStudent.prefect) {
+    document.querySelector(".student_prefect").classList.remove("hide");
+  } else {
+    document.querySelector(".student_prefect").classList.add("hide");
+  }
+
   document.querySelector("#expel_button").addEventListener("click", expelClicked);
   function expelClicked() {
     expelStudent(oneStudent);
+    if (oneStudent.expelled) {
+      document.querySelector(".student_expelled").classList.remove("hide");
+    } else {
+      document.querySelector(".student_expelled").classList.add("hide");
+    }
   }
 
   //winners
-  document.querySelector("#prefect_button").addEventListener("click", startTrophyClicked);
-  function startTrophyClicked() {
-    trophyClicked(oneStudent);
+  document.querySelector("#prefect_button").addEventListener("click", startPrefectClicked);
+  function startPrefectClicked() {
+    prefectClicked(oneStudent);
+    if (oneStudent.prefect) {
+      document.querySelector(".student_prefect").classList.remove("hide");
+    } else {
+      document.querySelector(".student_prefect").classList.add("hide");
+    }
   }
 
   document.querySelector("#details_popup .closebutton").addEventListener("click", closeDetails);
 
   function closeDetails() {
+    //search for student picture and houes shield
     document.querySelector("#details_popup .student_img").src = "images/";
     document.querySelector("#details_popup .student_house").src = "images/";
+
+    //remove eventlisteners from popup buttons
     document.querySelector("#details_popup .closebutton").removeEventListener("click", closeDetails);
     document.querySelector("#expel_button").removeEventListener("click", expelClicked);
+    document.querySelector("#prefect_button").removeEventListener("click", startPrefectClicked);
+
+    //hide modal, prefect & expel elements
     document.querySelector(".modal").classList.add("hide");
+    document.querySelector(".student_prefect").classList.add("hide");
+    document.querySelector(".student_expelled").classList.add("hide");
   }
 }
 
