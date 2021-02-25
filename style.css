@@ -7,11 +7,10 @@
   background-image: url(images/background.png);
   background-size: cover;
   background-repeat: no-repeat;
-  width: 100%;
-  background-attachment: fixed;
-
-  padding-top: 100px;
-  padding-bottom: 200px;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  z-index: -1;
 }
 
 .title {
@@ -23,6 +22,7 @@
 
   color: rgb(231, 229, 223);
 
+  padding-top: 100px;
   margin-bottom: 100px;
 }
 
@@ -182,6 +182,7 @@
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 
   max-width: 1200px;
+  padding-bottom: 100px;
 }
 
 .status_box {
