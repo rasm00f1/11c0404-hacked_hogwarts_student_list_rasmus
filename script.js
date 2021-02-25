@@ -3,6 +3,7 @@
 window.addEventListener("DOMContentLoaded", init);
 
 const studentList = [];
+const expelledStudentList = [];
 
 const filterButtons = document.querySelectorAll(`p[data-action="filter"]`);
 const sortButtons = document.querySelectorAll(`button[data-action="sort"]`);
@@ -136,56 +137,26 @@ function displayStudents(buildList) {
   container.innerHTML = "";
 
   buildList.forEach((oneStudent) => {
-    if (oneStudent.expelled === false) {
-      let clone = studentTemplate.cloneNode(true).content;
-      clone.querySelector(".student_firstname").textContent += oneStudent.firstName;
-      clone.querySelector(".student_lastname").textContent += oneStudent.lastName;
-      clone.querySelector(".student_img").src += oneStudent.img;
+    let clone = studentTemplate.cloneNode(true).content;
+    clone.querySelector(".student_firstname").textContent += oneStudent.firstName;
+    clone.querySelector(".student_lastname").textContent += oneStudent.lastName;
+    clone.querySelector(".student_img").src += oneStudent.img;
 
-      /*     if (oneStudent.expelled) {
+    if (oneStudent.expelled) {
       clone.querySelector(".student_expelled_list").classList.remove("hide");
     } else {
       clone.querySelector(".student_expelled_list").classList.add("hide");
-    } */
-
-      if (oneStudent.prefect) {
-        clone.querySelector(".student_prefect_list").classList.remove("hide");
-      } else {
-        clone.querySelector(".student_prefect_list").classList.add("hide");
-      }
-
-      clone.querySelector("article").addEventListener("click", () => showDetails(oneStudent));
-
-      container.appendChild(clone);
     }
-  });
-}
 
-function displayExpelled(buildList) {
-  const container = document.querySelector("#list");
-  const studentTemplate = document.querySelector("template");
-
-  container.innerHTML = "";
-
-  buildList.forEach((oneStudent) => {
-    if (oneStudent.expelled === true) {
-      let clone = studentTemplate.cloneNode(true).content;
-      clone.querySelector(".student_firstname").textContent += oneStudent.firstName;
-      clone.querySelector(".student_lastname").textContent += oneStudent.lastName;
-      clone.querySelector(".student_img").src += oneStudent.img;
-
-      clone.querySelector(".student_expelled_list").classList.remove("hide");
-
-      if (oneStudent.prefect) {
-        clone.querySelector(".student_prefect_list").classList.remove("hide");
-      } else {
-        clone.querySelector(".student_prefect_list").classList.add("hide");
-      }
-
-      clone.querySelector("article").addEventListener("click", () => showDetails(oneStudent));
-
-      container.appendChild(clone);
+    if (oneStudent.prefect) {
+      clone.querySelector(".student_prefect_list").classList.remove("hide");
+    } else {
+      clone.querySelector(".student_prefect_list").classList.add("hide");
     }
+
+    clone.querySelector("article").addEventListener("click", () => showDetails(oneStudent));
+
+    container.appendChild(clone);
   });
 }
 
@@ -292,9 +263,32 @@ function prefectStudent(student) {
   buildList();
 }
 
-function expelStudent(student) {
-  student.expelled = !student.expelled;
-  buildList();
+function expelWarning(student) {
+  // Ask the user if want to expel:
+  document.querySelector("#expel_student").classList.remove("hide");
+
+  document.querySelector("#expel_student .closebutton").addEventListener("click", closeDialog);
+  document.querySelector("#expel_student #expel_button_modal").addEventListener("click", expelStudent);
+
+  // show name of the student:
+  document.querySelector("#expel_student [data-field=expelledStudent]").textContent = student.lastName;
+
+  // If ignore, do nothing
+  function closeDialog() {
+    document.querySelector("#expel_student").classList.add("hide");
+    document.querySelector("#expel_student .closebutton").removeEventListener("click", closeDialog);
+    document.querySelector("#expel_student #expel_button_modal").removeEventListener("click", expelStudent);
+  }
+
+  // If expel is chosen:
+  function expelStudent() {
+    console.log("is running");
+    student.expelled = !student.expelled;
+    const expelledStudent = studentList.splice(studentList.indexOf(student), 1);
+    expelledStudentList.push(expelledStudent[0]);
+    buildList();
+    closeDialog();
+  }
 }
 
 //POPUP
@@ -324,15 +318,16 @@ function showDetails(oneStudent) {
 
   document.querySelector("#expel_button").addEventListener("click", expelClicked);
   function expelClicked() {
-    expelStudent(oneStudent);
+    expelWarning(oneStudent);
     if (oneStudent.expelled) {
       document.querySelector(".student_expelled").classList.remove("hide");
     } else {
       document.querySelector(".student_expelled").classList.add("hide");
     }
+    closeDetails();
   }
 
-  //winners
+  //PREFECT
   document.querySelector("#prefect_button").addEventListener("click", startPrefectClicked);
   function startPrefectClicked() {
     prefectClicked(oneStudent);
@@ -346,7 +341,7 @@ function showDetails(oneStudent) {
   document.querySelector("#details_popup .closebutton").addEventListener("click", closeDetails);
 
   function closeDetails() {
-    //search for student picture and houes shield
+    //reset student picture and houes shield
     document.querySelector("#details_popup .student_img").src = "images/";
     document.querySelector("#details_popup .student_house").src = "images/";
 
@@ -377,7 +372,7 @@ function setFilter(filter) {
   settings.filterBy = filter;
   console.log(filter);
   if (filter === "expelled") {
-    buildExpelledList();
+    buildList();
   } else {
     buildList();
   }
@@ -393,7 +388,7 @@ function filterList(filteredStudentList) {
   } else if (settings.filterBy === "ravenclaw") {
     filteredStudentList = studentList.filter(isRavenclaw);
   } else if (settings.filterBy === "expelled") {
-    filteredStudentList = studentList.filter(isExpelled);
+    filteredStudentList = expelledStudentList.filter(isExpelled);
   } else if (settings.filterBy === "all") {
     filteredStudentList = studentList.filter(isAll);
   }
@@ -496,16 +491,15 @@ function searchNames() {
 }
 //BUILD THE NEW LIST
 function buildList() {
-  const currentList = filterList(studentList);
-  const sortedList = sortList(currentList);
+  if (settings.filterBy === "expelled") {
+    const currentList = filterList(expelledStudentList);
+    const sortedList = sortList(currentList);
 
-  displayStudents(sortedList);
-}
+    displayStudents(sortedList);
+  } else {
+    const currentList = filterList(studentList);
+    const sortedList = sortList(currentList);
 
-function buildExpelledList() {
-  const currentList = filterList(studentList);
-  const sortedList = sortList(currentList);
-  console.log(sortedList);
-
-  displayExpelled(sortedList);
+    displayStudents(sortedList);
+  }
 }
