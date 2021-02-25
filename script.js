@@ -18,6 +18,7 @@ const Student = {
   house: null,
   prefect: false,
   expelled: false,
+  inqSquad: false,
   bloodStatus: "muggle",
 };
 
@@ -154,7 +155,7 @@ function prepareStudentData(data) {
 
       if (studentLastName === familyLastNameHalf) {
         student.bloodStatus = "halfblood";
-      } else if (studentLastName && (student.bloodStatus != "halfblood") === familyLastNamePure) {
+      } else if (studentLastName === familyLastNamePure && student.bloodStatus != "halfblood") {
         student.bloodStatus = "pure";
       }
     }
@@ -174,6 +175,7 @@ function displayStudents(buildList) {
     clone.querySelector(".student_firstname").textContent += oneStudent.firstName;
     clone.querySelector(".student_lastname").textContent += oneStudent.lastName;
     clone.querySelector(".student_img").src += oneStudent.img;
+    clone.querySelector(".student_bloodstatus_list").src += `${oneStudent.bloodStatus}.png`;
 
     if (oneStudent.expelled) {
       clone.querySelector(".student_expelled_list").classList.remove("hide");
@@ -187,13 +189,19 @@ function displayStudents(buildList) {
       clone.querySelector(".student_prefect_list").classList.add("hide");
     }
 
+    if (oneStudent.inqSquad) {
+      clone.querySelector(".student_inq_list").classList.remove("hide");
+    } else {
+      clone.querySelector(".student_inq_list").classList.add("hide");
+    }
+
     clone.querySelector("article").addEventListener("click", () => showDetails(oneStudent));
 
     container.appendChild(clone);
   });
 }
 
-//EXPELLING & PREFECTS
+//EXPELLING & PREFECTS & INQSQUAD
 function prefectClicked(selectedStudent) {
   console.log(selectedStudent);
   const studentStatus = checkPrefectStatus(selectedStudent);
@@ -243,7 +251,7 @@ function prefectClicked(selectedStudent) {
     }
   }
 
-  function removeAorB(winnerA, winnerB) {
+  function removeAorB(prefectA, prefectB) {
     //ask the user to ignore, or remove a or b
     document.querySelector("#remove_aorb").classList.remove("hide");
     document.querySelector("#remove_aorb .closebutton").addEventListener("click", closeDialog);
@@ -251,8 +259,8 @@ function prefectClicked(selectedStudent) {
     document.querySelector("#remove_aorb #removeb").addEventListener("click", removeB);
 
     // show name on buttons
-    document.querySelector("#remove_aorb [data-field=winnerA]").textContent = winnerA.lastName;
-    document.querySelector("#remove_aorb [data-field=winnerB]").textContent = winnerB.lastName;
+    document.querySelector("#remove_aorb [data-field=winnerA]").textContent = prefectA.lastName;
+    document.querySelector("#remove_aorb [data-field=winnerB]").textContent = prefectB.lastName;
     // If ignore, do nothing
     function closeDialog() {
       document.querySelector("#remove_aorb").classList.add("hide");
@@ -262,14 +270,14 @@ function prefectClicked(selectedStudent) {
     }
     //if remove A:
     function removeA() {
-      removeWinner(winnerA);
+      removeWinner(prefectA);
       makeWinner(selectedStudent);
       buildList();
       closeDialog();
     }
     //else - if removeB
     function removeB() {
-      removeWinner(winnerB);
+      removeWinner(prefectB);
       makeWinner(selectedStudent);
       buildList();
       closeDialog();
@@ -324,6 +332,24 @@ function expelWarning(student) {
   }
 }
 
+function inqStudent(oneStudent) {
+  oneStudent.inqSquad = !oneStudent.inqSquad;
+  buildList();
+}
+
+function inqWarning() {
+  // Ask the user if want to expel:
+  document.querySelector("#inq_student").classList.remove("hide");
+
+  document.querySelector("#inq_student .closebutton").addEventListener("click", closeDialog);
+
+  // If ignore, do nothing
+  function closeDialog() {
+    document.querySelector("#inq_student").classList.add("hide");
+    document.querySelector("#inq_student .closebutton").removeEventListener("click", closeDialog);
+  }
+}
+
 //POPUP
 
 function showDetails(oneStudent) {
@@ -339,6 +365,7 @@ function showDetails(oneStudent) {
     document.querySelector(".student_expelled").classList.remove("hide");
     document.querySelector("#expel_button").classList.add("hide");
     document.querySelector("#prefect_button").classList.add("hide");
+    document.querySelector("#inq_button").classList.add("hide");
   } else {
     document.querySelector(".student_expelled").classList.add("hide");
   }
@@ -349,6 +376,13 @@ function showDetails(oneStudent) {
     document.querySelector(".student_prefect").classList.add("hide");
   }
 
+  if (oneStudent.inqSquad) {
+    document.querySelector(".student_inq").classList.remove("hide");
+  } else {
+    document.querySelector(".student_inq").classList.add("hide");
+  }
+
+  //expelling eventlistener
   document.querySelector("#expel_button").addEventListener("click", expelClicked);
   function expelClicked() {
     expelWarning(oneStudent);
@@ -371,6 +405,23 @@ function showDetails(oneStudent) {
     }
   }
 
+  //InqSquad eventlistener
+  document.querySelector("#inq_button").addEventListener("click", inqClicked);
+  function inqClicked() {
+    if (oneStudent.bloodStatus === "pure" || oneStudent.house === "Slytherin") {
+      inqStudent(oneStudent);
+      document.querySelector(".student_inq").classList.remove("hide");
+    } else {
+      document.querySelector(".student_inq").classList.add("hide");
+      inqWarning();
+      closeDetails();
+    }
+
+    if (oneStudent.inqSquad === false) {
+      document.querySelector(".student_inq").classList.add("hide");
+    }
+  }
+
   document.querySelector("#details_popup .closebutton").addEventListener("click", closeDetails);
 
   function closeDetails() {
@@ -381,12 +432,14 @@ function showDetails(oneStudent) {
     //remove eventlisteners from popup buttons
     document.querySelector("#details_popup .closebutton").removeEventListener("click", closeDetails);
     document.querySelector("#expel_button").removeEventListener("click", expelClicked);
+    document.querySelector("#inq_button").removeEventListener("click", inqClicked);
     document.querySelector("#prefect_button").removeEventListener("click", startPrefectClicked);
 
     //hide modal, prefect & expel elements
     document.querySelector(".modal").classList.add("hide");
     document.querySelector(".student_prefect").classList.add("hide");
     document.querySelector(".student_expelled").classList.add("hide");
+    document.querySelector(".student_inq").classList.add("hide");
 
     document.querySelector("#expel_button").classList.remove("hide");
     document.querySelector("#prefect_button").classList.remove("hide");

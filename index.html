@@ -22,6 +22,8 @@
         <button class="button_style" data-action="sort" data-sort-direction="asc" data-sort="firstName" value="first_name">First name</button>
         <button class="button_style" data-action="sort" data-sort-direction="asc" data-sort="lastName" value="last_name">Last name</button>
         <button class="button_style" data-action="sort" data-sort-direction="asc" data-sort="house" value="last_name">House</button>
+        <button class="button_style" data-action="sort" data-sort-direction="asc" data-sort="prefect" value="last_name">Prefect</button>
+        <button class="button_style" data-action="sort" data-sort-direction="asc" data-sort="bloodStatus" value="last_name">Blood status</button>
         <input type="text" id="search_field" placeholder="Lumos .. " />
       </div>
       <div class="filter_container">
@@ -38,6 +40,8 @@
     <template>
       <article class="student">
         <div class="status_box">
+          <figure><img class="student_inq_list hide" src="images/inq_squad.png" alt=" photo" /></figure>
+          <figure><img class="student_bloodstatus_list" src="images/" alt=" photo" /></figure>
           <figure><img class="student_expelled_list hide" src="images/expelled.png" alt=" photo" /></figure>
           <figure><img class="student_prefect_list hide" src="images/prefect_star.png" alt=" photo" /></figure>
         </div>
@@ -59,9 +63,11 @@
         <figure><img class="student_house" src="images/" alt=" photo" /></figure>
         <div class="sort_container button_position">
           <figure><img class="student_expelled hide" src="images/expelled.png" alt=" photo" /></figure>
+          <figure><img class="student_inq hide" src="images/inq_squad.png" alt=" photo" /></figure>
           <figure><img class="student_prefect hide" src="images/prefect_star.png" alt=" photo" /></figure>
           <button id="expel_button" class="button_style">EXPEL</button>
           <button id="prefect_button" class="button_style">PREFECT</button>
+          <button id="inq_button" class="button_style">INQUISITORIAL SQUAD</button>
         </div>
       </div>
     </article>
@@ -77,6 +83,14 @@
         <div class="sidebyside">
           <button class="button_style" id="removeother">Remove <span data-field="winnerOther">the other</span></button>
         </div>
+      </div>
+    </div>
+
+    <div id="inq_student" class="modal hide">
+      <div class="dialog warning">
+        <button class="closebutton">X</button>
+        <h1>WARNING!</h1>
+        <p class="inq_p">This student is NOT of pure blood. Only students of PURE wizard heritage can join the inqisitorial squad.</p>
       </div>
     </div>
 

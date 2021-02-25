@@ -191,18 +191,30 @@
 
 .student_prefect_list {
   position: absolute;
-  width: 60px;
-  height: 60px;
-  right: 10%;
-  bottom: -30px;
+  width: 65px;
+  right: 4%;
+  bottom: -125px;
 }
 
 .student_expelled_list {
   position: absolute;
+  width: 80px;
+  right: 28%;
+  top: 15px;
+}
+
+.student_inq_list {
+  position: absolute;
   width: 50px;
-  height: 50px;
-  right: 58%;
-  bottom: -30px;
+  right: 60%;
+  top: 60px;
+}
+
+.student_bloodstatus_list {
+  position: absolute;
+  width: 20%;
+  right: 40%;
+  top: -65px;
 }
 
 .student {
@@ -307,8 +319,8 @@
 
 #details_popup .student_house {
   position: relative;
-  width: 172px;
-  height: 194px;
+  width: 194px;
+  height: 212px;
 }
 
 #details_popup h2 {
@@ -320,24 +332,36 @@
 
 .button_position {
   position: absolute;
-  top: 86%;
-  left: 30%;
+  top: 84%;
+  padding-left: 40px;
+  padding-right: 40px;
 }
 
 .student_prefect {
   position: absolute;
-  width: 70px;
-  height: 70px;
-  bottom: 60%;
-  right: -60%;
+  width: 80px;
+  bottom: 380px;
+  right: 16%;
 }
 
 .student_expelled {
   position: absolute;
-  width: 100px;
-  height: 100px;
-  bottom: -60%;
-  right: 15%;
+  width: 120px;
+  bottom: 410px;
+  right: 32%;
+}
+
+.student_inq {
+  position: absolute;
+
+  width: 70px;
+
+  bottom: 360px;
+  right: 210px;
+}
+
+.inq_p {
+  margin-bottom: 80px;
 }
 
 .closebutton {
