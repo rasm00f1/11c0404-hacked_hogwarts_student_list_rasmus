@@ -4,6 +4,7 @@ window.addEventListener("DOMContentLoaded", init);
 
 const studentList = [];
 const expelledStudentList = [];
+let familyData = null;
 
 const filterButtons = document.querySelectorAll(`p[data-action="filter"]`);
 const sortButtons = document.querySelectorAll(`button[data-action="sort"]`);
@@ -17,6 +18,7 @@ const Student = {
   house: null,
   prefect: false,
   expelled: false,
+  bloodStatus: "muggle",
 };
 
 const settings = {
@@ -47,8 +49,15 @@ function registerButtons() {
 async function loadJSON(url, callback) {
   const JSONData = await fetch(url);
   const studentData = await JSONData.json();
-  console.log(studentData);
-  callback(studentData);
+
+  const JSONDataFamily = await fetch("https://petlatkea.dk/2021/hogwarts/families.json");
+  familyData = await JSONDataFamily.json();
+
+  Promise.all([JSONData, JSONDataFamily, studentData, familyData]).then(() => {
+    console.log(studentData);
+    console.log(familyData);
+    callback(studentData);
+  });
 }
 
 function prepareStudentData(data) {
@@ -116,6 +125,7 @@ function prepareStudentData(data) {
       oneStudent.lastName = trimmedName.substring(firstSpace + 1, hyphenIndex) + hyphenName;
       oneStudent.img = `${hyphenName.substring(1, hyphenName.length).toLowerCase()}_${trimmedName.substring(0, 1).toLowerCase()}.png`;
     }
+
     studentList.push(oneStudent);
   });
 
@@ -124,6 +134,29 @@ function prepareStudentData(data) {
   checkForDuplicate.forEach((duplicate) => {
     if (checkForDuplicate.length >= 2) {
       duplicate.img = `${duplicate.lastName.toLowerCase()}_${duplicate.firstName.toLowerCase()}.png`;
+    } else {
+      console.log("all good");
+    }
+  });
+
+  for (let i = 0; i < studentList.length; i++) {
+    if (studentList[i].lastName === familyData.half) {
+      studentList[i].bloodStatus = "half";
+    }
+  }
+
+  studentList.forEach((student) => {
+    for (let i = 0; i < familyData.pure.length; i++) {
+      let studentLastName = student.lastName;
+
+      const familyLastNamePure = familyData.pure[i];
+      const familyLastNameHalf = familyData.half[i];
+
+      if (studentLastName === familyLastNameHalf) {
+        student.bloodStatus = "halfblood";
+      } else if (studentLastName && (student.bloodStatus != "halfblood") === familyLastNamePure) {
+        student.bloodStatus = "pure";
+      }
     }
   });
 
