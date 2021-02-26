@@ -34,8 +34,6 @@ let familyData = null;
 const filterButtons = document.querySelectorAll(`p[data-action="filter"]`);
 const sortButtons = document.querySelectorAll(`button[data-action="sort"]`);
 
-let keysPressed = {};
-
 const Student = {
   firstName: "",
   lastName: "",
@@ -198,6 +196,18 @@ function prepareStudentData(data) {
 }
 
 function displayStudents(buildList) {
+  if (settings.isHacked === true) {
+    for (let i = 0; i < buildList.length; i++) {
+      const currentStudent = buildList[i];
+      const decider = Math.round(Math.random());
+      if (currentStudent.bloodStatus === "pure" && decider === 0) {
+        currentStudent.bloodStatus = "halfblood";
+      } else if (currentStudent.bloodStatus === "pure" && decider === 1) {
+        currentStudent.bloodStatus = "muggle";
+      }
+    }
+  }
+
   const container = document.querySelector("#list");
   const studentTemplate = document.querySelector("template");
 
