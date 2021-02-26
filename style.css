@@ -47,6 +47,14 @@
   animation-duration: 1s;
 }
 
+.blink_fast {
+  animation-name: blink_kf;
+  animation-duration: 2s;
+  animation-iteration-count: 1;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
 @keyframes shake_kf {
   0% {
     transform: translate(0, 20px);
@@ -110,6 +118,36 @@
 
   padding-top: 100px;
   margin-bottom: 100px;
+}
+
+/* info_box styling! */
+
+#info_box {
+  position: fixed;
+  background-image: url(images/info_background.png);
+  background-size: cover;
+
+  top: 490px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: "Satisfy", cursive;
+
+  padding-top: 50px;
+  padding-bottom: 50px;
+
+  padding-left: 15px;
+  margin-left: 45px;
+  height: 400px;
+  width: 200px;
+  margin-bottom: 100px;
+}
+
+@media (max-width: 1650px) {
+  #info_box {
+    position: unset;
+    margin: 100px auto;
+  }
 }
 
 .options {

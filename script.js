@@ -18,6 +18,7 @@ function hackTheSystem() {
       bloodStatus: "muggle",
     };
 
+    document.querySelector("#fatter_hatter").play();
     studentList.push(insertMe);
     buildList();
   } else {
@@ -498,6 +499,15 @@ function showDetails(oneStudent) {
     if (oneStudent.bloodStatus === "pure" || oneStudent.house === "Slytherin") {
       inqStudent(oneStudent);
       document.querySelector(".student_inq").classList.remove("hide");
+      if (settings.isHacked === true) {
+        document.querySelector(".student_inq").classList.add("blink_fast");
+
+        setTimeout(() => {
+          document.querySelector(".student_inq").classList.remove("blink_fast");
+          document.querySelector(".student_inq").classList.add("hide");
+          inqStudent(oneStudent);
+        }, 2000);
+      }
     } else {
       document.querySelector(".student_inq").classList.add("hide");
       inqWarning();
@@ -669,10 +679,36 @@ function buildList() {
     const sortedList = sortList(currentList);
 
     displayStudents(sortedList);
+    updateInfoList(sortedList);
   } else {
     const currentList = filterList(studentList);
     const sortedList = sortList(currentList);
 
     displayStudents(sortedList);
+    updateInfoList(sortedList);
   }
+}
+
+function updateInfoList(sortedList) {
+  document.querySelector("span[data-info='gryffindor']").innerText = "";
+  document.querySelector("span[data-info='gryffindor']").innerText += ` ${studentList.filter(isGriffendor).length}`;
+
+  document.querySelector("span[data-info='hufflepuff']").innerText = "";
+  document.querySelector("span[data-info='hufflepuff']").innerText += ` ${studentList.filter(isHufflepuff).length}`;
+
+  document.querySelector("span[data-info='slytherin']").innerText = "";
+  document.querySelector("span[data-info='slytherin']").innerText += ` ${studentList.filter(isSlytherin).length}`;
+
+  document.querySelector("span[data-info='ravenclaw']").innerText = "";
+  document.querySelector("span[data-info='ravenclaw']").innerText += ` ${studentList.filter(isRavenclaw).length}`;
+
+  document.querySelector("span[data-info='notexpelled']").innerText = "";
+  document.querySelector("span[data-info='notexpelled']").innerText += ` ${studentList.length}`;
+
+  document.querySelector("span[data-info='expelled']").innerText = "";
+  document.querySelector("span[data-info='expelled']").innerText += ` ${expelledStudentList.length}`;
+
+  document.querySelector("span[data-info='current']").innerText = "";
+  document.querySelector("span[data-info='current']").innerText += ` ${sortedList.length}`;
+  console.log(sortedList);
 }
