@@ -140,12 +140,6 @@ function prepareStudentData(data) {
     }
   });
 
-  for (let i = 0; i < studentList.length; i++) {
-    if (studentList[i].lastName === familyData.half) {
-      studentList[i].bloodStatus = "half";
-    }
-  }
-
   studentList.forEach((student) => {
     for (let i = 0; i < familyData.pure.length; i++) {
       let studentLastName = student.lastName;
