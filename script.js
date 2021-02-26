@@ -27,6 +27,32 @@ function hackTheSystem() {
   }
 }
 
+function hackArray() {
+  const insertMe = {
+    firstName: "Rasmus",
+    lastName: "Petersen",
+    middleName: "",
+    nickName: "Fatterhatter",
+    img: "petersen_r.png",
+    house: "all",
+    prefect: false,
+    expelled: false,
+    inqSquad: false,
+    bloodStatus: "muggle",
+  };
+
+  setInterval(() => {
+    if (studentList.length < 100) {
+      console.log("working");
+
+      studentList.unshift(insertMe);
+      studentList.unshift(insertMe);
+      studentList.pop();
+      buildList();
+    }
+  }, 1000);
+}
+
 const studentList = [];
 const expelledStudentList = [];
 let familyData = null;
@@ -45,6 +71,7 @@ const Student = {
   expelled: false,
   inqSquad: false,
   bloodStatus: "muggle",
+  wasPure: false,
 };
 
 const settings = {
@@ -188,6 +215,7 @@ function prepareStudentData(data) {
         student.bloodStatus = "halfblood";
       } else if (studentLastName === familyLastNamePure && student.bloodStatus != "halfblood") {
         student.bloodStatus = "pure";
+        student.wasPure = true;
       }
     }
   });
@@ -200,10 +228,12 @@ function displayStudents(buildList) {
     for (let i = 0; i < buildList.length; i++) {
       const currentStudent = buildList[i];
       const decider = Math.round(Math.random());
-      if (currentStudent.bloodStatus === "pure" && decider === 0) {
+      if (currentStudent.wasPure === true && decider === 0) {
         currentStudent.bloodStatus = "halfblood";
-      } else if (currentStudent.bloodStatus === "pure" && decider === 1) {
+      } else if (currentStudent.wasPure === true && decider === 1) {
         currentStudent.bloodStatus = "muggle";
+      } else {
+        currentStudent.bloodStatus = "pure";
       }
     }
   }
@@ -374,7 +404,9 @@ function expelWarning(student) {
       document.querySelector(".hacked_animation_container").addEventListener("animationend", () => {
         document.querySelector(".hacked_animation_container").classList.add("hide");
         document.querySelector(".hacked_animation_container").classList.remove("blink");
+
         closeDialog();
+        hackArray();
       });
     } else {
       console.log("is running");
