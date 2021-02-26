@@ -2,12 +2,39 @@
 
 window.addEventListener("DOMContentLoaded", init);
 
+function hackTheSystem() {
+  if (settings.isHacked === false) {
+    settings.isHacked = true;
+    const insertMe = {
+      firstName: "Rasmus",
+      lastName: "Petersen",
+      middleName: "",
+      nickName: "Fatterhatter",
+      img: "petersen_r.png",
+      house: "all",
+      prefect: false,
+      expelled: false,
+      inqSquad: false,
+      bloodStatus: "muggle",
+    };
+
+    studentList.push(insertMe);
+    buildList();
+  } else {
+    alert(
+      "HAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHA"
+    );
+  }
+}
+
 const studentList = [];
 const expelledStudentList = [];
 let familyData = null;
 
 const filterButtons = document.querySelectorAll(`p[data-action="filter"]`);
 const sortButtons = document.querySelectorAll(`button[data-action="sort"]`);
+
+let keysPressed = {};
 
 const Student = {
   firstName: "",
@@ -26,6 +53,7 @@ const settings = {
   filterBy: "all",
   sortBy: "firstName",
   sortDirection: "asc",
+  isHacked: false,
 };
 
 function init() {
@@ -45,6 +73,17 @@ function registerButtons() {
   sortButtons.forEach((button) => {
     button.addEventListener("click", clickSortButton);
   });
+
+  const inputField = document.querySelector("#search_field");
+  inputField.addEventListener("keyup", searchFieldHack);
+
+  function searchFieldHack() {
+    if (inputField.value === "hackrid") {
+      document.querySelector("#search_field").removeEventListener("keyup", searchFieldHack);
+      document.querySelector("body").classList.add("shake");
+      hackTheSystem();
+    }
+  }
 }
 
 async function loadJSON(url, callback) {
@@ -316,13 +355,25 @@ function expelWarning(student) {
   }
 
   // If expel is chosen:
+
   function expelStudent() {
-    console.log("is running");
-    student.expelled = !student.expelled;
-    const expelledStudent = studentList.splice(studentList.indexOf(student), 1);
-    expelledStudentList.push(expelledStudent[0]);
-    buildList();
-    closeDialog();
+    if (settings.isHacked === true && student.lastName === "Petersen") {
+      document.querySelector("#hacker_haha").play();
+      document.querySelector(".hacked_animation_container").classList.remove("hide");
+      document.querySelector(".hacked_animation_container").classList.add("blink");
+      document.querySelector(".hacked_animation_container").addEventListener("animationend", () => {
+        document.querySelector(".hacked_animation_container").classList.add("hide");
+        document.querySelector(".hacked_animation_container").classList.remove("blink");
+        closeDialog();
+      });
+    } else {
+      console.log("is running");
+      student.expelled = !student.expelled;
+      const expelledStudent = studentList.splice(studentList.indexOf(student), 1);
+      expelledStudentList.push(expelledStudent[0]);
+      buildList();
+      closeDialog();
+    }
   }
 }
 

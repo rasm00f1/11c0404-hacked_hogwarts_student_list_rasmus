@@ -13,6 +13,92 @@
   z-index: -1;
 }
 
+/*HACKED CSS */
+
+.hacked_animation_container {
+  position: fixed;
+
+  width: 100vw;
+  height: 100vh;
+
+  top: 0;
+  left: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+.hacked_animation {
+  position: absolute;
+}
+
+.blink {
+  animation-name: blink_kf;
+  animation-duration: 2s;
+  animation-iteration-count: 5;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
+.shake {
+  animation-name: shake_kf;
+  animation-duration: 1s;
+}
+
+@keyframes shake_kf {
+  0% {
+    transform: translate(0, 20px);
+  }
+  50% {
+    transform: translate(0, -20px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes blink_kf {
+  0% {
+    opacity: 100%;
+  }
+
+  2% {
+    opacity: 10%;
+  }
+
+  4% {
+    opacity: 100%;
+  }
+
+  48% {
+    opacity: 100%;
+  }
+
+  50% {
+    opacity: 5%;
+  }
+
+  51% {
+    opacity: 95%;
+  }
+
+  93% {
+    opacity: 100%;
+  }
+
+  95% {
+    opacity: 0%;
+  }
+
+  96% {
+    opacity: 100%;
+  }
+}
+
+/*HACKED CSS */
+
 .title {
   text-align: center;
 
