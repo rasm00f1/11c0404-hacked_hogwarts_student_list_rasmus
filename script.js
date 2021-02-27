@@ -292,9 +292,7 @@ function prefectClicked(selectedStudent) {
     prefectStudent(selectedStudent);
   } else if (checkForSameHouse === true) {
     removeOther(otherPrefectStudent);
-    console.log("Can't have multiple of the same type as winners");
   } else if (prefectArray.length >= 2) {
-    console.log("There are to many winners");
     removeAorB(prefectArray[0], prefectArray[1]);
   } else {
     prefectStudent(selectedStudent);
@@ -307,7 +305,7 @@ function prefectClicked(selectedStudent) {
     document.querySelector("#remove_other #removeother").addEventListener("click", clickRemoveOther);
 
     // show name of winner to remove
-    document.querySelector("#remove_other [data-field=winnerOther]").textContent = other.lastName;
+    document.querySelector("#remove_other [data-field=prefectOther]").textContent = other.lastName;
 
     // If ignore, do nothing
     function closeDialog() {
@@ -318,8 +316,8 @@ function prefectClicked(selectedStudent) {
 
     // If remove other:
     function clickRemoveOther() {
-      removeWinner(other);
-      makeWinner(selectedStudent);
+      removePrefect(other);
+      makePrefect(selectedStudent);
       buildList();
       closeDialog();
     }
@@ -333,8 +331,8 @@ function prefectClicked(selectedStudent) {
     document.querySelector("#remove_aorb #removeb").addEventListener("click", removeB);
 
     // show name on buttons
-    document.querySelector("#remove_aorb [data-field=winnerA]").textContent = prefectA.lastName;
-    document.querySelector("#remove_aorb [data-field=winnerB]").textContent = prefectB.lastName;
+    document.querySelector("#remove_aorb [data-field=prefectA]").textContent = prefectA.lastName;
+    document.querySelector("#remove_aorb [data-field=prefectB]").textContent = prefectB.lastName;
     // If ignore, do nothing
     function closeDialog() {
       document.querySelector("#remove_aorb").classList.add("hide");
@@ -344,25 +342,25 @@ function prefectClicked(selectedStudent) {
     }
     //if remove A:
     function removeA() {
-      removeWinner(prefectA);
-      makeWinner(selectedStudent);
+      removePrefect(prefectA);
+      makePrefect(selectedStudent);
       buildList();
       closeDialog();
     }
     //else - if removeB
     function removeB() {
-      removeWinner(prefectB);
-      makeWinner(selectedStudent);
+      removePrefect(prefectB);
+      makePrefect(selectedStudent);
       buildList();
       closeDialog();
     }
   }
 
-  function removeWinner(prefectStudent) {
+  function removePrefect(prefectStudent) {
     prefectStudent.prefect = false;
   }
 
-  function makeWinner(currentStudent) {
+  function makePrefect(currentStudent) {
     currentStudent.prefect = true;
   }
 
